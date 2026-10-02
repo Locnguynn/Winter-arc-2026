@@ -33,3 +33,32 @@ print(planet_2.orbit())
 
 print(planet_3)
 print(planet_3.orbit())
+
+----2/10/2026 ----
+Tui làm challenges trên codédex. Thật ra là luyện bài tập và củng cố kiến thức bài cũng không thức sự khó lém
+earth_weight = float(input('Enter your weight: '))
+planet = int(input('Enter the planet number: '))
+destination_weight = earth_weight * 0.38
+if planet == 1:
+  destination_weight = earth_weight * 0.38
+  print(destination_weight)
+elif planet == 2:
+  destination_weight = earth_weight * 0.91
+  print(destination_weight)
+elif planet == 3:
+  destination_weight = earth_weight * 0.38 
+  print(destination_weight)
+elif planet == 4:
+  destination_weight = earth_weight * 2.53
+  print(destination_weight)
+elif planet == 5:
+  destination_weight = earth_weight * 1.07
+  print(destination_weight)
+elif planet == 6:
+  destination_weight = earth_weight * 0.89
+  print(destination_weight)
+elif planet == 7:
+  destination_weight = earth_weight * 1.14
+  print(destination_weight)
+else:
+  print('Invalid number')
