@@ -1,0 +1,221 @@
+class Category:
+    def  __init__(self, name):
+        self.name = name
+        self.ledger = []
+    
+    def deposit(self, amount, description=""):
+        self.ledger.append({"amount": amount, "description": description})
+    
+    def get_balance(self):
+        return sum(item["amount"] for item in self.ledger)
+    
+    def check_funds(self, amount):
+        self.get_balance()
+        return amount <= self.get_balance()
+    
+    def withdraw(self, amount, description=""):
+        if self.check_funds(amount):
+            self.ledger.append({"amount": -amount, "description":
+        description})
+            return True
+        return False
+    
+    def transfer(self, amount, category):
+        if self.check_funds(amount):
+            self.withdraw(amount, f"Transfer to {category.name}")
+            category.deposit(amount, f"Transfer from {self.name}")
+            return True
+        return False
+    
+    def __str__(self):
+        output = f"{self.name:*^30}\n"
+        for item in self.ledger:
+            desc = item['description'][:23]
+            amt = item["amount"]
+            output += f"{desc:<23}{amt:>7.2f}\n"
+        
+        output += f"Total: {self.get_balance()}"
+        return output
+def create_spend_chart(categories):
+    
+    chart = "Percentage spent by category\n"
+    
+    
+    spent_amounts = []
+    for category in categories:
+        spent = 0
+        for item in category.ledger:
+            if item["amount"] < 0:
+                spent += abs(item["amount"])
+        spent_amounts.append(spent)
+        
+    total_spent = sum(spent_amounts)
+    
+    
+    percentages = []
+    for amount in spent_amounts:
+        
+        percent = (amount / total_spent) * 100
+        rounded_percent = int(percent / 10) * 10
+        percentages.append(rounded_percent)
+        
+
+    for i in range(100, -1, -10):
+        chart += f"{i:>3}| "
+        for percent in percentages:
+            if percent >= i:
+                chart += "o  "
+            else:
+                chart += "   "
+        chart += "\n"
+        
+
+    chart += "    " + "-" * (len(categories) * 3 + 1) + "\n"
+    
+    
+    max_name_length = max([len(category.name) for category in categories])
+    
+    for i in range(max_name_length):
+        chart += "     " 
+        
+        for category in categories:
+            if i < len(category.name):
+                chart += category.name[i] + "  "
+            else:
+                chart += "   "
+        
+        if i < max_name_length - 1:
+            chart += "\n"
+            
+    return chart
+
+------------------------------------------------------------------
+
+Phần 1: Khởi tạo Class và Quản lý Trạng thái (Category)
+1. Khởi tạo đối tượng (__init__)
+Python
+class Category:
+    def __init__(self, name):
+        self.name = name
+        self.ledger = []
+Nó làm gì: Đây là "bản vẽ thiết kế" cho mỗi danh mục chi tiêu (ví dụ: Food, Clothing). Khi cậu tạo một danh mục mới, nó sẽ lưu lại tên (self.name) và tạo sẵn một cuốn sổ cái rỗng (self.ledger = []) ở dạng danh sách (list) để chuẩn bị ghi chép các giao dịch sau này.
+
+2. Ghi nhận tiền nạp (deposit)
+Python
+    def deposit(self, amount, description=""):
+        self.ledger.append({"amount": amount, "description": description})
+Nó làm gì: Mỗi khi có tiền đổ vào, hàm này sẽ đóng gói số tiền (amount) và lời chú thích (description) thành một cuốn sổ tay nhỏ dạng Dictionary ({...}), rồi nhét (.append()) thẳng vào trong danh sách self.ledger. Nếu người dùng quên ghi chú thích, nó sẽ tự động để mặc định là chuỗi rỗng "".
+
+3. Tính số dư hiện tại (get_balance)
+Python
+    def get_balance(self):
+        return sum(item["amount"] for item in self.ledger)
+Nó làm gì: Thay vì lưu số dư cố định (rất dễ bị sai lệch khi có tiền vào/ra), hàm này mở sổ cái ra, dùng vòng lặp gom tất cả các giá trị ở khóa "amount" của từng giao dịch lại rồi dùng hàm sum() của Python để tính tổng toàn bộ số dư hiện tại và trả về (return).
+
+4. Kiểm tra quỹ (check_funds)
+Python
+    def check_funds(self, amount):
+        return amount <= self.get_balance()
+Nó làm gì: Đóng vai trò như "bảo vệ ngân hàng". Hàm này nhận vào một khoản tiền (amount) mà cậu muốn rút hoặc chuyển, đem so sánh nó với tổng số dư hiện tại (gọi lại hàm self.get_balance()). Nếu số tiền muốn lấy nhỏ hơn hoặc bằng số dư thì hợp lệ (trả về True), ngược lại trả về False.
+
+5. Rút tiền (withdraw)
+Python
+    def withdraw(self, amount, description=""):
+        if self.check_funds(amount):
+            self.ledger.append({"amount": -amount, "description": description})
+            return True
+        return False
+Nó làm gì: Trước khi cho rút tiền, nó phải gọi hàm check_funds(amount) ở trên để kiểm tra xem tài khoản có đủ tiền hay không.
+
+Nếu đủ (True): Nó sẽ ghi nhận một giao dịch mới vào sổ cái với số tiền mang dấu âm (-amount) vì đây là tiền mất đi, sau đó trả về True (báo hiệu rút thành công).
+
+Nếu không đủ (False): Nó từ chối giao dịch và trả về False.
+
+6. Chuyển tiền qua lại (transfer)
+Python
+    def transfer(self, amount, category):
+        if self.check_funds(amount):
+            self.withdraw(amount, f"Transfer to {category.name}")
+            category.deposit(amount, f"Transfer from {self.name}")
+            return True
+        return False
+Nó làm gì: Xử lý dòng tiền chạy từ danh mục này sang danh mục khác. Đầu tiên nó kiểm tra quỹ xem danh mục nguồn có đủ tiền không. Nếu đủ:
+
+Gọi hàm withdraw để trừ tiền ở danh mục hiện tại với cú pháp mô tả chuẩn: "Transfer to [Tên danh mục nhận]".
+
+Ngay lập tức gọi hàm deposit của danh mục bên kia để cộng tiền vào, với mô tả: "Transfer from [Tên danh mục chuyển]".
+
+Báo thành công (True).
+
+7. In hóa đơn định dạng (__str__)
+Python
+    def __str__(self):
+        output = f"{self.name:*^30}\n"
+        for item in self.ledger:
+            desc = item['description'][:23]
+            amt = item["amount"]
+            output += f"{desc:<23}{amt:>7.2f}\n"
+        output += f"Total: {self.get_balance()}"
+        return output
+Nó làm gì: Khi cậu dùng lệnh print(food), Python tự động chạy hàm này để "trang trí" lại dữ liệu thành một cái biên lai siêu thị:
+
+Dòng đầu: Tên danh mục được căn giữa, lấp đầy 30 ký tự bằng dấu sao (*).
+
+Vòng lặp giữa: Lấy từng dòng giao dịch, cắt mô tả tối đa 23 ký tự căn trái (:<23), định dạng số tiền có đúng 2 chữ số thập phân và căn phải (:>7.2f).
+
+Dòng cuối: In tổng số dư hiện tại và trả về toàn bộ chuỗi kết quả.
+
+Phần 2: Vẽ biểu đồ thống kê (create_spend_chart) — "Trùm cuối"
+Hàm này nằm độc lập bên ngoài class, nhận vào danh sách nhiều danh mục để vẽ sơ đồ cột:
+
+Python
+def create_spend_chart(categories):
+    # 1. Khởi tạo tiêu đề
+    chart = "Percentage spent by category\n"
+    
+    # 2. Thu thập tổng tiền rút của từng danh mục
+    spent_amounts = []
+    for category in categories:
+        spent = 0
+        for item in category.ledger:
+            if item["amount"] < 0: # Chỉ lọc số âm (tiền rút ra tiêu)
+                spent += abs(item["amount"])
+        spent_amounts.append(spent)
+        
+    total_spent = sum(spent_amounts)
+    
+    # 3. Tính toán tỷ lệ phần trăm và làm tròn xuống hàng chục
+    percentages = []
+    for amount in spent_amounts:
+        percent = (amount / total_spent) * 100
+        rounded_percent = int(percent / 10) * 10 # Thủ thuật làm tròn (vd: 79 -> 70)
+        percentages.append(rounded_percent)
+        
+    # 4. Vẽ trục tung (100 đến 0) và các cột 'o'
+    for i in range(100, -1, -10):
+        chart += f"{i:>3}| " # Căn lề phải trục số
+        for percent in percentages:
+            if percent >= i:
+                chart += "o  " # Nếu % đạt ngưỡng thì vẽ cục gạch
+            else:
+                chart += "   " # Ngược lại để trống khoảng trắng
+        chart += "\n"
+        
+    # 5. Vẽ đường kẻ ngang dưới đáy biểu đồ
+    chart += "    " + "-" * (len(categories) * 3 + 1) + "\n"
+    
+    # 6. Treo bảng tên danh mục dọc theo chiều dọc
+    max_name_length = max([len(category.name) for category in categories])
+    
+    for i in range(max_name_length):
+        chart += "     " # Chừa khoảng trống lề trái cho đồng bộ với cột số trên
+        for category in categories:
+            if i < len(category.name):
+                chart += category.name[i] + "  " # In từng chữ cái dọc xuống
+            else:
+                chart += "   " # Điền khoảng trắng nếu tên đã hết chữ
+        
+        if i < max_name_length - 1:
+            chart += "\n" # Xuống dòng cho các hàng chữ, trừ hàng cuối cùng
+            
+    return chart
