@@ -40,6 +40,11 @@ Below are the hands-on projects completed as part of the freeCodeCamp curriculum
 * Description: A control interface for a game character or media player.
 * Learning Objectives: Class methods, property encapsulation, and Object-Oriented Programming interactions.
 * Folder: `./build-a-player-interface`
+  
+### 5. Build a Polygon Area Calculator
+- Description: An object-oriented application to calculate the area, perimeter, and visual representation of Rectangle and Square shapes.
+- Learning Objectives: Class inheritance, method overriding, string representation (`__str__`), and object-oriented design patterns.
+- Folder: `./Build a Polygon Area Calculator, Completed Certification Project`
 
 ---
 
