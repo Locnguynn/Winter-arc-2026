@@ -53,6 +53,11 @@ Below are the hands-on projects completed as part of the freeCodeCamp curriculum
 * Learning Platforms: freeCodeCamp, Udemy
 * IDE / Environment: VS Code / macOS
 
+  ## 🛠️ Advanced Topics & Research
+
+- **Model Context Protocol (MCP):** Researching and implementing standard protocol specifications to enable secure, context-aware data communication between AI models and external data sources / tools.
+- **AI Agent Skills:** Exploring agent capabilities, structured tool definitions, prompt engineering, and multi-step reasoning workflows to build autonomous task-execution agents.
+
 ---
 
 Consistency over perfection.
